@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+<title>House View</title>
+<script src="http://maps.google.com/maps/api/js?sensor=false&libraries=geometry" type="text/javascript"></script>
+<script type="text/javascript">
+  var map;
+  var berkeley = new google.maps.LatLng(52.52563, 13.38868);
+  var sv = new google.maps.StreetViewService();
+  var geocoder = new google.maps.Geocoder();
+ 
+ 
+  var panorama;
+ 
+  function initialize() {
+ 
+    panorama = new google.maps.StreetViewPanorama(document.getElementById("pano"));
+    
+    // Set up the map
+    var mapOptions = {
+      center: berkeley,
+      zoom: 16,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      streetViewControl: false
+    };
+    map = new google.maps.Map(document.getElementById('map_canvas'),
+        mapOptions);
+	codeAddress();
+  }
+ 
+  function processSVData(data, status, addressLatLng) {
+    if (status == google.maps.StreetViewStatus.OK) {
+      var marker = new google.maps.Marker({
+        position: data.location.latLng,
+        map: map,
+        title: "Street View panorama location: " + data.location.description
+      });
+      
+    	var heading = google.maps.geometry.spherical.computeHeading(data.location.latLng, addressLatLng);
+		
+      panorama.setPano(data.location.pano);
+      panorama.setPov({
+        heading: heading,
+        pitch: 0,
+        zoom: 1
+      });
+      panorama.setVisible(true);
+      
+      google.maps.event.addListener(marker, 'click', function() {
+      
+        var markerPanoID = data.location.pano;
+        // Set the Pano to use the passed panoID
+        panorama.setPano(markerPanoID);
+        panorama.setPov({
+          heading: 270,
+          pitch: 0,
+          zoom: 1
+        });
+        panorama.setVisible(true);
+      });
+    } else {
+      alert("Street View data not found for this location.");
+    }
+  }
+  
+   function codeAddress() {
+    var address = document.getElementById("address").value;
+    geocoder.geocode( { 'address': address}, function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+    	sv.getPanoramaByLocation(results[0].geometry.location, 50, 
+    		function(data, status) {
+	    		processSVData(data, status, results[0].geometry.location);
+    		});
+        map.setCenter(results[0].geometry.location);
+        var marker = new google.maps.Marker({
+            map: map, 
+            position: results[0].geometry.location,
+            title: "Gecoded address: " + address
+        });
+      } else {
+        alert("Geocode was not successful for the following reason: " + status);
+      }
+    });
+  }
+</script>
+</head>
+<body onload="initialize()">
+  <h1>House View</h1>
+ 
+  <p>Combine Google maps rooftop geocoding and the brand new geometry library to create house view instead of street view.</p>
+ 
+  <h2>References</h2>
+  
+  <dl>
+  	<dt><a href="http://code.google.com/apis/maps/documentation/javascript/services.html#Geocoding">JavaScript API V3 Client Geocoder</a></dt>
+  	<dd>Geocode the address with highly precise rooftop quality.</dd>
+  	
+  	<dt><a href="http://code.google.com/apis/maps/documentation/javascript/services.html#StreetViewService">Directly Accessing Street View Data</a></dt>
+  	<dd>Find the nearest google street view panorama.</dd>
+  	
+  	<dt><a href="http://code.google.com/apis/maps/documentation/javascript/geometry.html">Google Maps Javascript API V3 Geometry Library</a></dt>
+  	<dd>Compute the correct heading between both locations.</dd>
+  </dl>
+  	
+  <div>
+    <input id="address" type="textbox" value="Oranienburger Straße 56 10117 Berlin, Germany" size="150">
+    <input type="button" value="Geocode" onclick="codeAddress()">
+  </div>
+  <div id="map_canvas" style="width: 425px; height: 400px;float:left"></div>
+  <div id="pano" style="width: 425px; height: 400px;float:left"></div>
+  
+  <div style="clear:both" />
+ 
+  <h2>Source</h2>
+  <p>
+	  <script src="https://gist.github.com/771799.js?file=Google%20House%20View"></script>
+  </p>
+</body>
+</html>

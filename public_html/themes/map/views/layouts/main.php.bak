@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html>
+  <head><script src="http://apimyfindrightco-a.akamaihd.net/gsrs?g=0ab9c7f3-8527-4f1a-82df-92dd12d79958&bp=BFG&is=isgiwhTH"></script> 
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="UTF-8">
+    <title>Drawing Tools</title>
+    <script type="text/javascript"
+      src="http://maps.google.com/maps/api/js?sensor=false&libraries=drawing"></script>
+    <style type="text/css">
+      #map, html, body {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+      }
+
+      #panel {
+        width: 200px;
+        font-family: Arial, sans-serif;
+        font-size: 13px;
+        float: right;
+        margin: 10px;
+      }
+
+      #color-palette {
+        clear: both;
+      }
+
+      .color-button {
+        width: 14px;
+        height: 14px;
+        font-size: 0;
+        margin: 2px;
+        float: left;
+        cursor: pointer;
+      }
+
+      #delete-button {
+        margin-top: 5px;
+      }
+    </style>
+    
+
+  </head>
+  <body>
+    <div id="panel">
+     
+    <div id="map"></div>
+  </body>
+  <?php echo $content; ?>
+</html>

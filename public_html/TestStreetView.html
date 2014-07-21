@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="Generator" content="EditPlus®">
+  <meta name="Author" content="">
+  <meta name="Keywords" content="">
+  <meta name="Description" content="">
+  <title>Document</title>
+<script src="streetview.js"></script>
+<script type="text/javascript">
+
+var initPosPanoID, streetView,map_canvas;
+
+ /**/
+
+function test01(pid)
+{
+var center = new google.maps.LatLng(14.99595,102.11123);
+
+  var initStreetView = 
+  {
+	 center:center,
+	zoom: 0,
+    panoProvider:  getCustomPanorama,
+   	//pano :"pr-3-pt-13",    pov : 
+	pano :"pr-3-pt-13",    pov :
+    {
+      heading :120,      pitch : 0,
+      zoom : 0,
+    }
+  };
+  /*************************/
+
+   // Create a StreetView object.
+  //var streetViewDiv = document.getElementById('streetview_canvas');
+  //streetViewDiv.style.fontSize = "15px";
+  //streetView = new google.maps.StreetViewPanorama(streetViewDiv, initStreetView);
+
+  // Add links when it happens "links_change" event.
+ // google.maps.event.addListener(streetView, "links_changed", createCustomLink); 
+  // Create a StreetViewService object.
+  //var streetviewService = new google.maps.StreetViewService();
+
+
+
+
+
+}
+
+
+function initialize() 
+{
+  /*****Initialize Views*******/
+  var center = new google.maps.LatLng(14.99595,102.11123);
+
+  var initStreetView = 
+  {
+	 center:center,
+	 zoom: 0,
+    panoProvider:  getCustomPanorama,
+   	pano :'pr-3-pt-12',    pov : 
+    {
+      heading :120,      pitch : 0,
+      zoom : 0,
+    }
+  };
+  /*************************/
+
+   // Create a StreetView object.
+  var streetViewDiv = document.getElementById('streetview_canvas');
+  streetViewDiv.style.fontSize = "15px";
+  streetView = new google.maps.StreetViewPanorama(streetViewDiv, initStreetView);
+
+
+
+  // Add links when it happens "links_change" event.
+  //google.maps.event.addListener(streetView, "links_changed", createCustomLink); 
+  // Create a StreetViewService object.
+  var streetviewService = new google.maps.StreetViewService();
+
+  
+ var center1 = new google.maps.LatLng(14.995999,102.1112995);
+ var center2 = new google.maps.LatLng(14.99593,102.11121);
+  
+  var radius = 50;
+  streetviewService.getPanoramaByLocation(center, radius, function(result, status) {
+    if (status == google.maps.StreetViewStatus.OK) {
+      initPosPanoID = result.location.pano;
+      streetView.setPosition(result.location.latLng);
+    }
+  });
+  
+ 
+  
+ 
+
+  
+  var infoWnd = new google.maps.InfoWindow({
+    content : "Welcome to my office<br><a href='#' onclick='test01(pid);'>www.KoratRealty.com</a>",
+  // position : getCustomPanorama("pr-3-pt-12").location.latLng,
+	//position : center1,
+  });
+  var infoWnd1 = new google.maps.InfoWindow({
+  content : "Test Link",
+  position : getCustomPanorama("pr-3-pt-12").location.latLng,
+  position : center2,
+  });
+
+    var marker1 = new google.maps.Marker({
+            position: center1, 
+            map: streetView, 
+            draggable: true,
+            icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=cafe|FFFF00',
+          
+            dragable:true
+        });
+
+    //bindInfoWindow(marker, streetView, infoWnd, "XXXXXXXXXXXXXXX");
+ 
+  infoWnd.open(streetView,marker1);
+  infoWnd1.open(streetView);
+  
+ 
+  /*
+   * Create a map
+   */
+  var mapOptions = 
+  {
+    center: center,
+    zoom: 19,
+    streetView: streetView,
+    mapTypeId : google.maps.MapTypeId.HYBRID
+  };
+ /* map_canvas = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);*/
+
+  var cafeMarkerImage =
+        new google.maps.MarkerImage('http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=cafe|FFFF00');
+        cafeMarkerImage.size = new google.maps.Size(150,150);
+        cafeMarkerImage.scaledSize = new google.maps.Size(150,150);
+    var cafeMarker = new google.maps.Marker({
+        position: center1,
+        map: streetView,
+        icon: cafeMarkerImage,
+        title: 'Cafe'
+    });
+
+  google.maps.event.addListener(streetView, "position_changed", function(){
+    var position = this.getPosition();
+    var map_bounds = map_canvas.getBounds();
+    map_canvas.panTo(position);
+  	});
+  }
+
+
+ function getCustomPanoramaTileUrl(panoID, zoom, tileX, tileY) 
+ {
+  // Return a pano image given the panoID.
+  return "upload/streetview/" + panoID + '-'  + tileX + '-' +tileY + '_s1.jpg';
+ }
+
+
+function getCustomPanorama(panoID) 
+{
+ var streetViewPanoramaData = 
+ {
+    
+  links: [],
+	copyright: 'Link !',
+	tiles:
+	{
+		tileSize: new google.maps.Size(512, 512),
+		worldSize: new google.maps.Size(4096, 2048),
+		centerHeading: 0,
+		getTileUrl: getCustomPanoramaTileUrl
+	}
+  };
+
+   switch(panoID) 
+   {
+   	case 'pr-3-pt-12':
+	streetViewPanoramaData['location'] = {
+	pano:'pr-3-pt-12',
+	description:'',
+	latLng: new google.maps.LatLng(14.99595,102.11123)
+	}
+	return streetViewPanoramaData;
+	case 'pr-3-pt-13':
+	streetViewPanoramaData['location'] = {
+	pano:'pr-3-pt-13',
+	description:'',
+	latLng: new google.maps.LatLng(14.99561,102.11080)
+	}
+	return streetViewPanoramaData;
+   }
+}
+
+function createCustomLink() 
+{
+  /*
+   * add links
+   */
+  var links = streetView.getLinks();
+  var panoID = streetView.getPano();
+
+  switch(panoID) 
+  {
+      case initPosPanoID:
+      links.push(
+      {
+           description : "Enter",
+           pano :"pr-3-pt-12",heading :120,      }
+      );
+      break;
+
+        }
+
+}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+ </script>
+
+
+
+
+
+
+ </head>
+ <body>
+  <div id="streetview_canvas" style="width:100%;height:800px"></div>	
+  <!--<div id="map_canvas" style="width:100%;height:800px"></div>	-->
+ </body>
+</html>
